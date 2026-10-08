@@ -210,38 +210,4 @@ with tab2:
     # 3. NDVIの計算: (NIR - Red) / (NIR + Red)
     denominator = nir_corr + r_corr
     denominator[denominator == 0] = 1e-5 # ゼロ除算防止
-    ndvi = (nir_corr - r_corr) / denominator
-    ndvi = np.clip(ndvi, -1.0, 1.0)
-
-    # 4. フォールスカラー (Color InfraRed: CIR) 生成 (R=NIR, G=Red, B=Green)
-    cir_img = np.stack([nir_corr, r_corr, g_raw], axis=-1)
-    cir_img = np.clip(cir_img * 255, 0, 255).astype(np.uint8)
-
-    # ---- 画像表示 ----
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.image(raw_img, caption="撮影生画像 (R:赤+NIR, G:緑, B:NIR)", use_container_width=True)
-
-    with col2:
-        st.image(cir_img, caption="フォールスカラー (CIR: R=NIR, G=Red, B=Green)", use_container_width=True)
-
-    with col3:
-        fig_ndvi, ax = plt.subplots(figsize=(5, 4))
-        im = ax.imshow(ndvi, cmap='RdYlGn', vmin=-0.2, vmax=1.0)
-        ax.axis('off')
-        ax.set_title("植生指標 (NDVI)")
-        fig_ndvi.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-        st.pyplot(fig_ndvi)
-
-    st.markdown("---")
-    st.write("📌 **パラメータの影響:** サイドバーの `α` を上げると赤チャネルの近赤外ノイズが減少してNDVIのコントラストが向上し、`β` を上げると近赤外感度が増強されます。")
-```eof
-
-### アプリの実行手順
-
-1. **必要なライブラリのインストール**
-   ターミナルで以下のコマンドを実行して必要なパッケージをインストールします。
-   
-```bash
-   pip install streamlit numpy plotly matplotlib pillow
+    ndvi = (nir_corr -
